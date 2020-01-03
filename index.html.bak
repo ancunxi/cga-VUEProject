@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>单窗通办综合受理系统</title>
+    <meta name="viewport" content="width=640, target-densitydpi=device-dpi, user-scalable=no">
+    <script src="/static/jquery.min.js"></script>
+	<script>
+      window.config = {
+        //上传本地文件测试服务器地址
+        api: 'http://10.180.227.246:8085/cospace2017',
+        //工作待办——流程图图片存放地址
+        workflowUrl: '',
+        //cospace项目URL地址
+        cospaceUrl: 'http://10.180.227.246:8373'
+      };
+
+      window.config.workflowUrl = localStorage.getItem('workFlowUrl');
+    </script>
+    <style>
+    	.carmerayw_cover{
+        display: block !important;
+      }
+      .carmerayw{
+        position:fixed;
+        top: 50px;
+        left: 50%;
+        margin-left: -500px;
+        z-index: 20000;
+        background:#fff;
+        display: block !important;
+      }
+      .carmeraNoneyw{
+        display:none;
+      }
+      div.dhx_modal_cover {
+        border: currentColor;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        _height: 0;
+        _overflow: hidden;
+        position: fixed;
+        filter: alpha(opacity=50);
+        opacity: .5;
+        z-index: 19999;
+        cursor: default;
+        zoom: 1;
+        background-color: rgba(0,0,0,255);
+      }
+    </style>
+ 
+  </head>
+    
+  <body onunload="Unload()">
+    <div id="app"></div>
+
+   	<!-- 良田高拍仪拍照 -->
+  	<div class="dhx_modal_cover" id='carmerayw_cover' class='' style="display:none;"></div>
+  	<div id='carmerayw' class='' style="display:none;margin-top:1%;margin-left:-22%">     
+  		<div style="width: 800px; height: 490px;">
+      		<object id="view1" type="application/x-eloamplugin" style="width: 100%; height: 370px;" name="view"></object>
+					<br />
+					<object id="thumb1" type="application/x-eloamplugin" style="width: 100%; height: 110px;" name="thumb"></object>
+      </div>
+       <select id="device" style="width: 90px;display: none;" ></select>
+      <hr/>
+      
+      <div class="carmerInputArea">
+        <span class="carmerLabel" >文件名(*不带后缀)：</span>
+        <input  id="CarmeraPhotoName" style="width: 100px" type="text" value="image1" />
+			<input type="button" value="左转"	onclick="Left()" />
+            <input type="button" value="右转"	onclick="Right()" />
+         <input id="btn1" type="button" value="拍照上传" onclick="uploadPhoto()"/>
+         <input  id="btn2" type="button" value=" 拍照 " onclick="Scan()"/>
+      		<select id="mode" style="display:none;">
+        		<option value="0">左右合成</option>
+        		<option value="1" selected="selected">上下合成</option>
+      		</select>
+      	<input type="button" value="多张图片合成" onClick="ImageStitching()" />
+        <input type="button" value=" 关闭 " onclick="hideCarmeraWin()"/>  
+        <span class="carmerLoading" id="carmerLoading" dhxbox="1" style="display:none;"></span>
+      </div>
+  	</div> 
+  	
+    <!-- 调用高拍仪拍照 -->
+    <script language=javascript>
+      	var dev1;
+	var dev2;
+	var video;
+	var _afterUploadFunc = null;
+	
+	function plugin(){
+          return document.getElementById('view1');
+    }
+	
+    function view(){
+        return document.getElementById('view1');
+    }
+	      	
+	function thumb(){
+	    return document.getElementById('thumb1');
+	}
+	
+	function addEvent(obj, name, func){
+        if (obj.attachEvent) {
+            obj.attachEvent("on"+name, func);
+        } else {
+            obj.addEventListener(name, func, false); 
+        }
+     }
+	function OpenVideoMain(){	
+		CloseVideo();
+		
+		var select = document.getElementById('device'); 
+		var devIdx = select.selectedIndex;
+	
+		if(devIdx == 0){												
+			video = plugin().Device_CreateVideo(dev1, 0, 0);
+			if (video){
+				view().View_SelectVideo(video);
+				view().View_SetText("打开设备中，请等待...", 0);								
+			}	
+		}else if(devIdx == 1){								
+			video = plugin().Device_CreateVideo(dev2, 0, 0);
+			if (video){
+				view().View_SelectVideo(video);
+				view().View_SetText("打开设备中，请等待...", 0);								
+			}		
+		}
+		//显示拍照按钮
+		$('#btn_carmeraUpload').show();
+	}
+	   function OpenVideo()
+		        {
+		            CloseVideo();
+
+		            if (!dev1)return;
+						
+			        VideoMain = plugin().Device_CreateVideo(dev1, 0, 1);
+			        if (VideoMain)
+			        {
+					    view().View_SelectVideo(VideoMain);
+					    view().View_SetText("打开视频中，请等待...", 0);
+							
+			        }
+					//显示拍照按钮
+					$('#btn_carmeraUpload').show();
+		        }
+
+	function CloseVideo(){
+		if (video){
+			view().View_SetText("", 0);
+			plugin().Video_Release(video);
+			video = null;
+		}		
+	}
+	function Load(){
+		//设备接入和丢失
+		//type设备类型， 1 表示视频设备， 2 表示音频设备
+		//idx设备索引
+		//dbt 1 表示设备到达， 2 表示设备丢失		
+		addEvent(plugin(), 'DevChange', function(type,idx,dbt){
+			if (1 == type){
+				if (0 == idx){
+					if (1 == dbt){
+						dev1 = plugin().Global_CreateDevice(1, 0);
+						if (dev1){
+							var select = document.getElementById('device'); 
+							var name = plugin().Global_GetFriendlyName(1, 0);
+							select.add(new Option(name));	
+				
+							var select = document.getElementById('device'); 
+							select.selectedIndex = 0;
+					
+							OpenVideo();									
+						}						
+					}else if (2 == dbt){
+						if (dev1){
+							if(plugin().Device_GetIndex(dev1) == idx){
+								if(video){
+									view().View_SetText("", 0);
+									plugin().Video_Release(video);
+									video = null;
+								}
+								plugin().Device_Release(dev1);
+								dev1 = null;
+								
+								document.getElementById('device').options[0]=null;
+							}
+						}
+						if (dev2){
+							if(plugin().Device_GetIndex(dev2) == idx){
+								if(video){
+									view().View_SetText("", 0);
+									plugin().Video_Release(video);
+									video = null;
+								}
+								plugin().Device_Release(dev2);
+								dev2 = null;
+								
+								document.getElementById('device').options[1]=null;
+							}
+						}							
+					}						
+				}else if (1 == idx){
+					if (1 == dbt){
+						dev2 = plugin().Global_CreateDevice(1, 1);
+						if (dev2)
+						{
+							var select = document.getElementById('device'); 
+							var name = plugin().Global_GetFriendlyName(1, 1);
+							select.add(new Option(name));								
+						}						
+					}else if (2 == dbt){
+						if (dev1){
+							if(plugin().Device_GetIndex(dev1) == idx){
+								if(video1){
+									view1().View_SetText("", 0);
+									plugin().Video_Release(video1);
+									video1 = null;
+								}
+								plugin().Device_Release(dev1);
+								dev1 = null;
+								
+								document.getElementById('device').options[0]=null;
+							}
+						}
+						if (dev2){
+							if(plugin().Device_GetIndex(dev2) == idx){
+								if(video2){
+									view2().View_SetText("", 0);
+									plugin().Video_Release(video2);
+									video2 = null;
+								}
+								plugin().Device_Release(dev2);
+								dev2 = null;
+								
+								document.getElementById('device').options[1]=null;
+							}
+						}
+					}
+				}				
+			}					
+		 });
+			
+		view().Global_SetWindowName("view");
+		thumb().Global_SetWindowName("thumb");
+		plugin().Global_CreateDir("D:\\temp");
+		plugin().Global_InitDevs();		
+	}
+	
+	function Unload(){
+		if (video){
+			view().View_SetText("", 0);
+			plugin().Video_Release(video);
+			video = null;
+		}
+		if(dev1){
+			plugin().Device_Release(dev1);
+			dev1 = null;	
+		}
+		if(dev2){
+			plugin().Device_Release(dev2);
+			dev2 = null;	
+		}
+		plugin().Global_RemoveDir("D:\\temp");
+		plugin().Global_DeinitDevs();
+	}
+	
+	//高拍仪拍照上传
+	function ScanToHttpServer(){
+		var fileName = document.getElementById('CarmeraPhotoName').value+".jpg";
+		if(video){
+			var img = plugin().Video_CreateImage(video, 0, view().View_GetObject());
+			if (img){
+				//获取图像文件的base64数据
+				var filedatas = plugin().Image_GetBase64(img,2,0);
+				var url = window.config.api + "/attachment/uploadFileFromBase64.do";
+				//通过ajax提交
+				$.ajax({
+					cache : false,
+					type : "POST",
+					url : url,
+					data : {"filedatas":filedatas,"filename":fileName},
+					async : true,
+					error : function(msg) {
+						 $("#btn_carmeraUpload").show();
+				     $("#carmerLoading").hide();
+						 alert("高拍仪拍照上传失败！");
+					},success : function(data) {
+						if (data.success) {//上传成功
+							var uploadName = document.getElementById('CarmeraPhotoName').value;
+				      if(_afterUploadFunc!=undefined && typeof(_afterUploadFunc)=="function") {
+				        _afterUploadFunc(data.obj.id, uploadName);
+				      }
+				      hideCarmeraWin();
+						}else{
+							 $("#btn_carmeraUpload").show();
+				       $("#carmerLoading").hide();
+				       alert("拍照上传失败！");     
+						}
+					}
+				});
+				plugin().Image_Release(img);
+			}
+		}
+	}
+	
+	function Scan()
+		{	
+			var date = new Date();
+			var yy = date.getFullYear().toString();
+			var mm = (date.getMonth() + 1).toString();
+			var dd = date.getDate().toString();
+			var hh = date.getHours().toString();
+			var nn = date.getMinutes().toString();
+			var ss = date.getSeconds().toString();
+			var mi = date.getMilliseconds().toString();
+			var Name = "D:\\temp\\" + yy + mm + dd + hh + nn + ss + mi + ".jpg";
+			var img = plugin().Video_CreateImage(video, 0, view().View_GetObject());
+			var bSave = plugin().Image_Save(img, Name, 0);
+			if (bSave)
+			{
+				plugin().View_PlayCaptureEffect();
+				thumb().Thumbnail_Add(Name);
+			}
+			
+			plugin().Image_Release(img);
+		}
+	
+	// 获取某缩略图项是否被选中，返回值boolean,参数int
+	function IsChecked(iIndex){
+		return thumb().Thumbnail_GetCheck(iIndex);
+	}
+	// 获取指定缩略图项的文件路径,返回值String，参数int 
+	function GetImageFilePath(iIndex){
+		return thumb().Thumbnail_GetFileName(iIndex);
+	}
+  //获取图像数量，返回值int
+	function GetImgCount(){
+		return thumb().Thumbnail_GetCount();
+	}
+//
+//多个图片合并为一张,返回值boolean
+	function ImageStitching(){
+		var fileName = document.getElementById('CarmeraPhotoName').value+".pdf";
+		var date = new Date();
+		var yy = date.getFullYear().toString();
+		var mm = (date.getMonth() + 1).toString();
+		var dd = date.getDate().toString();
+		var hh = date.getHours().toString();
+		var nn = date.getMinutes().toString();
+		var ss = date.getSeconds().toString();
+		var mi = date.getMilliseconds().toString();
+		var sInputPath="";
+		var sOutputPath="D:/temp/hc"+ yy + mm + dd + hh + nn + ss + mi +".pdf";
+		var iMode=document.getElementById('mode').selectedIndex;
+		var imgPath;
+		var sum=GetImgCount();
+		//var info = new Array; 
+		var info = thumb().Global_CreateImageList();
+	  for(var i=0;i<sum;i++){
+//		  var isOk=IsChecked(i);
+//		  if(isOk){
+			  imgPath=GetImageFilePath(i);
+			  var img = plugin().Global_CreateImageFromFile(imgPath,0);
+			  plugin().ImageList_Add(info,img);
+//		  }
+		}
+	  	var pdf = thumb().ImageList_SaveToPDF(info,2,sOutputPath, 0);
+	  	if(pdf){
+	  		var pdfObj = plugin().Global_CreateMemoryFromFile(sOutputPath);
+	  		var pdfBase64 = plugin().Memory_GetBase64(pdfObj);
+	  		var url = window.config.api + "/attachment/uploadFileFromBase64.do";
+				//通过ajax提交
+				$.ajax({
+					cache : false,
+					type : "POST",
+					url : url,
+					data : {"filedatas":pdfBase64,"filename":fileName},
+					async : true,
+					error : function(msg) {
+						 $("#btn_carmeraUpload").show();
+				     $("#carmerLoading").hide();
+						 alert("高拍仪拍照上传失败！");
+					},success : function(data) {
+						if (data.success) {//上传成功
+							var uploadName = document.getElementById('CarmeraPhotoName').value;
+				      if(_afterUploadFunc!=undefined && typeof(_afterUploadFunc)=="function") {
+				        _afterUploadFunc(data.obj.id, uploadName);
+				      }
+				      hideCarmeraWin();
+						}else{
+							 $("#btn_carmeraUpload").show();
+				       $("#carmerLoading").hide();
+				       alert("拍照上传失败！");     
+						}
+					}
+				});
+				//plugin().Image_Release(img);
+	  	}else{
+	  		alert("合成pdf文件失败!");
+	  	}		
+}
+	 //----------其他子页面调用高拍仪拍照入口-------------
+     function showCarmeraWin(afterUploadFunc) {
+        //显示高拍仪
+        debugger;
+        document.getElementById('carmerayw_cover').classList.add('carmerayw_cover');
+        document.getElementById('carmerayw').classList.add('carmerayw');
+        //清空之前的值  （仅需清理文件名）
+        document.getElementById('CarmeraPhotoName').value = 'image1';        
+        $("#btn_carmeraUpload").hide(); 
+        $("#carmerLoading").hide();
+
+        _afterUploadFunc = null;
+        if(afterUploadFunc!=undefined && typeof(afterUploadFunc)=="function") {
+          _afterUploadFunc = afterUploadFunc;          
+        }
+        //打开设备
+				Load();
+      }    
+
+      //----------点击拍照按钮触发高拍仪拍照上传到服务器-------------//
+      function uploadPhoto() {
+        var uploadName = $("#CarmeraPhotoName").val();
+        //正则验证
+        var reg = /^[^.\x22]+$/;
+        if(uploadName.length==0){
+          alert("资料名称不能为空");
+        }else{
+          if(!reg.test(uploadName)){
+            alert("资料名称不能有“.”");
+          }else{
+            $("#btn_carmeraUpload").hide();
+            $("#carmerLoading").show();
+            //触发设备进行拍照
+           	ScanToHttpServer();
+          }
+        }
+      }     
+
+      //----------关闭高拍仪拍照上传窗口-------------//
+      function hideCarmeraWin() {
+      	Unload();
+        document.getElementById('carmerayw_cover').classList.remove('carmerayw_cover');
+        document.getElementById('carmerayw').classList.remove('carmerayw');
+        $("#carmerLoading").hide();
+      }
+
+     //******************良田二代证阅读器********************//
+      //二代身份证信息读取
+	  function readIdCard(){
+	  	$("#carmerayw").css("display","block");
+	  	Load();
+	  	//定义数组接收身份证信息
+	    var info = new Array();
+	    if(!plugin().Global_InitIdCard()){
+		    alert("初始化二代证阅读器失败！");
+		    return;
+	    } 
+	    if(plugin().Global_DiscernIdCard()){
+	    	debugger;
+		    alert("请刷卡！");
+	   		//获取身份证号码
+				info[0] = plugin().Global_GetIdCardData(8);
+				//获取姓名
+		  	info[1] = plugin().Global_GetIdCardData(1);
+		  	//获取性别
+				info[2] = plugin().Global_GetIdCardData(2);
+	    }else{
+		    alert("启动二代证阅读失败！");
+	    }
+	    StopIDCard();
+	    $("#carmerayw").css("display","none");
+	    
+	  	return info;
+	  }
+  	function StopIDCard(){
+	    plugin().Global_StopIdCardDiscern();
+	    plugin().Global_DeinitIdCard();
+	    Unload();
+    }
+  	
+    function Left(){
+			    if(dev1){
+				        plugin().Video_RotateLeft(video);
+			     }
+			   if(dev2){
+				        plugin().Video_RotateLeft(video);	
+			   }	
+
+	}
+	function Right()
+		        {
+			        if(dev1)
+			        {
+				        plugin().Video_RotateRight(video);
+			        }
+			        if(dev2)
+			        {
+				        plugin().Video_RotateRight(video);		
+			        }	
+
+		        }
+		
+    </SCRIPT>
+
+    <script language=javascript FOR="EtOcxEx" EVENT="CZUR_CALLBACK(uploadcnt, barcode, httpinfo, imagefile1, imagefile2)" >
+       JS_CZUR_CALLBACK(uploadcnt, barcode, httpinfo, imagefile1, imagefile2);
+    </SCRIPT>  	
+  </body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>易政通一网式政务服务系统V1.0</title>
+    <meta name="viewport" content="width=640, target-densitydpi=device-dpi, user-scalable=no">
+    <script>
+      window.config = {
+        //上传本地文件测试服务器地址
+        api: 'http://127.0.0.1:8080/cospace2017',
+        //工作待办——流程图图片存放地址
+        workflowUrl: '',
+        //cospace项目URL地址
+        cospaceUrl: 'http://192.168.0.15:4040',
+      };
+
+      window.config.workflowUrl = localStorage.getItem('workFlowUrl');
+    </script>
+    <style>
+    	.carmerayw_cover{
+    		display: block !important;
+    	}
+    	.carmerayw{
+    		position:fixed;
+    		top:20px;
+    		left:50%;
+    		margin-left: -420px;
+    		z-index: 20000;
+    		background:#fff;
+    		display: block !important;
+    	}
+    	.carmeraNoneyw{
+    		display:none;
+    	}
+    	div.dhx_modal_cover {
+        border: currentColor;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        _height: 0;
+        _overflow: hidden;
+        position: fixed;
+        filter: alpha(opacity=50);
+        opacity: .5;
+        z-index: 19999;
+        cursor: default;
+        zoom: 1;
+        background-color: rgba(0,0,0,255);
+    	}
+    </style>
+  </head>
+    
+  <body onunload="releaseCarmera()">
+    <div id="app"></div>
+
+    <!--start 读取身份证信息 -->
+    <div style="display:none;">
+  	<object classid="clsid:6D2088B7-1B97-4960-9535-5115614F29E0" id="WidControl"  width="1" height="1"></object>
+  	<table style="border-style: double; width: 800px; height: 384px; ">
+      <tr>
+        <td class="style3">姓名:</td>
+        <td class="style1"><input id="Text1" type="text" style="width: 165px" name="Name" /></td>
+        <td class="style2">性别:</td>
+        <td><input id="Text2" type="text" name="Sex" style="width:204px;" /></td>
+        <td rowspan="3"><img  src="" style="width: 156px; height: 95px" name="Pic1" align="middle"/></td>
+      </tr>
+      <tr>
+        <td class="style3">民族:</td>
+        <td class="style1"> <input id="Text3" type="text" style="width: 163px" name="Folk" /></td>
+        <td class="style2">出生日期:</td>
+        <td> <input id="Text4" type="text" name="BirthDate" style="width: 203px" /></td>
+      </tr>
+      <tr>
+        <td class="style3">住址:</td>
+        <td colspan="3"> <input id="Text5" style="width: 491px" type="text" name="Address" /></td>
+      </tr>
+      <tr>
+        <td class="style3">身份证号:</td>
+        <td colspan="3"> <input id="Text6" style="width: 491px" type="text" name="IdNo" /></td>
+        <td rowspan="3"> <img  src="" style="width: 156px; height: 87px" name="Pic2" align="middle"/></td>
+      </tr>
+      <tr>
+        <td class="style3">签发机关:</td>
+        <td colspan="3"> <input id="Text7" style="width: 492px" type="text" name="Agency" /></td>
+      </tr>
+      <tr>
+        <td class="style3">有效期限:</td>
+        <td colspan="3"> <input id="Texst8" style="width: 493px" type="text" name="Valid" /></td>
+      </tr>
+      <tr>
+        <td class="style3">模块编号:</td>
+        <td colspan="3"> <input id="Text9" style="width: 491px" type="text" name="Mode" /></td>
+        <td rowspan="3"> <img  src="" name="Pic3" /></td>
+      </tr>
+      <tr>
+        <td class="style3">BMP照片数据Base64编码:</td>
+        <td colspan="3"> <textarea id="TextArea1" name="PhotoB64"  style="width: 656px; height: 45px" rows="1"></textarea></td>
+      </tr>
+      <tr>
+        <td class="style3">JPG照片数据Base64编码:</td>
+        <td colspan="3"> <textarea id="TextArea1" name="JpgB64" style="width: 652px; height: 45px" rows="1"></textarea></td>
+      </tr>
+      <tr>
+        <td class="style4">指纹数据Base64编码:</td>
+        <td colspan="4" class="style5"> <textarea id="TextArea1" name="FingerB64" style="width: 652px; height: 45px" rows="1"></textarea></td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td colspan="4" style="text-align: right">
+  	      <input type="button" value="读身份证" onClick="Idcard();">
+          <input type="button" value="打印身份证正面" onClick="PrintCard(1);">
+          <input type="button" value="打印身份证反面" onClick="PrintCard(2);">
+          <input type="button" value="打印身份证正、反面" onClick="PrintCard(3);">
+        </td>
+      </tr>
+    </table>
+    </div>
+   <!--end 读取身份证信息 -->
+
+  	<!-- start 拍照 -->
+  	<div class="dhx_modal_cover" id='carmerayw_cover' class='' style="display:none;"></div>
+  	<div id='carmerayw' class=''  style="display:none;">
+  		<div style="clear: both; width: 840px; height: 480px;">
+        <object id="VideoInputCtl" classid="CLSID:30516390-004F-40B9-9FC6-C9096B59262E" style="width: 640px; height: 100%; float: left;"></object>
+  			<img id="Base64Image" src="data:image" style="height: 200px; width: 200px; float:left;"/>
+      </div>
+      <hr/>
+
+      <div  style="margin:10px auto">
+  	    <span style='margin-left: 10px;'>请输入文件名：</span>
+  	    <input id="CarmeraPhotoName" type="text" value=""  style="width: 240px;height: 20px;"/>
+  	    <input type="button" id='' value="拍照"  onclick="grabbase64Carmera()" style="width: 60px"/>
+  	    <input type="button" id='CarmeraUpload' value="上传"  style="width: 60px"/>
+  	    <input type="button" value="关闭" onclick="CarmeraCancel()" style="width: 60px"/>
+  	    <br/>
+      </div>
+  	    
+      <div style="display:none;">
+  	    Base64:
+  	    <input id="GrabBase64" type="button" value="GrabBase64" onclick="grabbase64Carmera()" style="width: 120px" />
+  	    <textarea id="Base64Text" readonly="readonly" style="height: 120px; width: 480px;"></textarea>
+  	    <br />
+      </div>
+  	</div>
+  	<!-- start 拍照 -->
+
+    <!-- built files will be auto injected -->
+
+  	<script language=javascript>
+  		//  <!--start 读取身份证信息 -->
+  		//Idcard0();
+  		function Idcard0(){
+  		  var result;
+  		  //注意：第一个参数为对应的设备端口，USB型为1001，串口型为1至16
+  		  //第二个参数为文件保存路径及文件名，当为“”时，保存在系统临时目录(由API GetTempPath获得)
+  		  //ReadCard函数调用示例如下：
+  		  //result=WidControl.ReadCard(1001,"C:\\wid\\photo.bmp");
+  		  //result=WidControl.ReadCard(1001,"C:\\wid\\");
+  		  //result=WidControl.ReadCard(1001,"C:\\wid");
+  		  //result=WidControl.ReadCard(1001,"");  
+  		  result=WidControl.ReadCard(1001,"C:\\wid\\photo.bmp");
+  		  document.all['Mode'].value=WidControl.GetSAMID();
+  		  if (result==1){
+  		    document.all['Name'].value=WidControl.GetName();
+  		    document.all['Sex'].value=WidControl.GetSex();
+  		    document.all['Folk'].value=WidControl.GetFolk();
+  		    document.all['BirthDate'].value=WidControl.GetBirthDate();
+  		    document.all['Address'].value=WidControl.GetAddress();
+  		    document.all['IdNo'].value=WidControl.GetCode();
+  		    document.all['Agency'].value=WidControl.GetAgency();
+  		    document.all['Valid'].value=WidControl.GetValid();
+  		    document.all['PhotoB64'].value=WidControl.GetPhotobuf();
+  		    document.all['JpgB64'].value=WidControl.GetJPGPhotoBuf();
+  		    document.all['FingerB64'].value=WidControl.GetFPData();
+  		    document.all['Pic1'].src = "C:\\wid\\1.bmp";
+  		    document.all['Pic2'].src = "C:\\wid\\2.bmp";
+  		    document.all['Pic3'].src = "C:\\wid\\photo.bmp";
+  		  //  document.all['Pic3'].src = "data:image/jpg;base64,"+WidControl.GetPhotobuf();
+  		  //  document.all['Pic2'].src = "data:image/bmp;base64,"+WidControl.GetFPData();
+  		  }else{
+  		    if (result==-1)
+  		      alert("端口初始化失败！");
+  		    if (result==-2)
+  		      alert("请重新将卡片放到读卡器上！");
+  		    if (result==-3)
+  		      alert("读取数据失败！");
+  		    if (result==-4)
+  		      alert("生成照片文件失败，请检查设定路径和磁盘空间！");
+  		    if(result == -5)
+  		      alert("加载动态库失败");
+  		  }
+  		}
+  		function PrintCard(iPrintType){
+  		  var result;
+  		  result=WidControl.PrintCard(iPrintType);
+  		}
+  		function OnCleanData(){
+  		  document.all['Name'].value="";
+  		  document.all['Sex'].value="";
+  		  document.all['Folk'].value="";
+  		  document.all['BirthDate'].value="";
+  		  document.all['Address'].value="";
+  		  document.all['IdNo'].value="";
+  		  document.all['Agency'].value="";
+  		  document.all['Valid'].value="";
+  		  document.all['PhotoB64'].value="";
+  		  document.all['JpgB64'].value="";
+  		  document.all['FingerB64'].value="";
+  		  document.all['Pic1'].src = "";
+  		  document.all['Pic2'].src = "";
+  		  document.all['Mode'].value="";
+  		}
+  		//<!--end 读取身份证信息 -->
+
+  		// <!-------------start 拍照 ------------------------------>
+  		function releaseCarmera(){
+        var nDeviceIndex = 0;
+
+        if (VideoInputCtl.IsDeviceOpened(nDeviceIndex)) {
+          VideoInputCtl.StopPlayDevice(nDeviceIndex);
+          VideoInputCtl.CloseDevice(nDeviceIndex);
+        }
+        
+        nDeviceIndex = 1;
+
+        if (VideoInputCtl.IsDeviceOpened(nDeviceIndex)) {
+          VideoInputCtl.StopPlayDevice(nDeviceIndex);
+          VideoInputCtl.CloseDevice(nDeviceIndex);
+        }
+      }
+
+      function opendeviceCarmera(type) {
+        var nDeviceIndex = 0;
+        var nFormatIndex = 0;
+    
+        var renlian="";
+        var ziliao="";
+        var nDeviceCount = VideoInputCtl.GetDeviceCount();
+        for (var i = 0; i < nDeviceCount; i++) {
+          var szDeviceName = VideoInputCtl.GetDeviceName(i); //alert(szDeviceName);
+          if("USB2.0 Camera [1a3c:010d]"==szDeviceName){
+            ziliao=i;
+          }else if("USB Camera [1a3c:0820]"==szDeviceName){
+            renlian=i;
+          }
+          
+          if ("USB2.0 Camera [1a3c:010d]" == szDeviceName || "USB2.0 视频设备 [1a3c:010d]" == szDeviceName) {
+              ziliao = i;
+          } else if ("USB Camera [1a3c:0820]" == szDeviceName || "USB 视频设备 [1a3c:0820]" == szDeviceName) {
+              renlian = i;
+          }
+        }
+
+        if(type != null){
+          if(type == 1 || type == 3){
+            nDeviceIndex = ziliao;
+            nFormatIndex = 2;
+          }else {
+            nDeviceIndex = renlian;
+            nFormatIndex = 4;
+          }
+        }
+
+        if (!VideoInputCtl.IsDeviceOpened(nDeviceIndex)) {
+          VideoInputCtl.OpenDevice(nDeviceIndex);
+          VideoInputCtl.SetDeviceFormatIndex(nDeviceIndex, nFormatIndex);
+        }
+        VideoInputCtl.StartPlayDevice(nDeviceIndex);
+
+        grabbase64Carmera();   //触发生成64位编码
+      }
+
+      function grabbase64Carmera() {
+        var szBase64 = VideoInputCtl.GrabToBase64(".jpg");
+        if(szBase64 == null || szBase64 == "") {
+          //alert("设备初始化未完成,请刷新网页初始化设备！");
+          alert("设备初始化未完成,请重新操作！");
+          releaseCarmera();
+        }
+        Base64Text.value = szBase64;
+        Base64Image.src = "data:image/tiff;base64," + szBase64;
+        return szBase64;    
+      }
+      
+      function  CarmeraCancel(){
+      	document.getElementById('carmerayw_cover').classList.remove('carmerayw_cover');
+    		document.getElementById('carmerayw').classList.remove('carmerayw');
+    		Base64Image.src='';
+      }
+          
+      //<!-----------------end 拍照 ------------------>
+  	</script>
+  </body>
+</html>

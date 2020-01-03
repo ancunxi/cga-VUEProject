@@ -1,0 +1,487 @@
+/**整体字号都调大了一号**/
+body, .ivu-table, .ivu-form .ivu-form-item-label, .ivu-form-item-content {
+  font-size: 13px;
+}
+.white {
+  color: #fff!important
+}
+.gray {
+  color: #999!important
+}
+.red {
+  color: #df5138!important
+}
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+.center {
+  text-align: center;
+}
+/*省略号*/
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.no-margin-bottom {
+  margin-bottom: 0px!important;
+}
+.margin-bottom-10 {
+  margin-bottom: 10px!important;
+}
+.margin-bottom-20 {
+  margin-bottom: 20px!important;
+}
+.margin-bottom-40 {
+  margin-bottom: 40px!important;
+}
+.bordered-dashed-1 {
+  border: 1px dashed #dddee1;
+}
+.h140{
+  height:140px; 
+}
+h1,h2,h3,h4,h5,h6,strong {
+  font-weight: 500!important;
+}
+h1 {
+  font-size: 32px;
+}
+h2 {
+  font-size: 26px;
+}
+h3 {
+  font-size: 22px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 15px;
+}
+h6 {
+  font-size: 13px;
+}
+ul, li {
+  list-style: none;
+}
+/**标题**/
+.title {
+  color: #1c2438;
+}
+.title>span {
+  display: inline-block;
+  padding: 0 25px 5px 20px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #dddee1;  
+}
+.title>span>.ivu-icon {
+  margin-right: 5px;
+  color: #5cadff;         
+}
+/**副标题**/
+.subtitle {
+  color: #80848f;
+}
+/**分割线**/
+.divider {
+  color: #e9eaec;
+}
+/**input中的icon**/
+.ivu-input-icon {
+  font-size: 20px;
+  cursor: pointer;
+}
+/**modal垂直居中**/
+.ivu-modal-style {
+  display: flex; 
+  -ms-flex-align: center;
+  display: -ms-flexbox;
+  justify-content: center; /**水平居中**/
+  align-items: center;     /**垂直居中**/
+  margin: 0 auto; 
+  flex-direction: column;
+}
+.ivu-modal-style>.ivu-modal {
+  top: 0;
+}
+
+/*解决modal显示不全，水平不居中*/
+.ivu-modal-absolute-500 .ivu-modal{
+  position: absolute;
+  left:50%;
+  margin-left: -250px;
+  top:6%;
+}
+
+html {
+  height: 100%;
+  min-height: 100%;
+  position: relative;
+  overflow-x: hidden;
+  font-size: 10px;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0)
+}
+body {
+  height: 100%;
+  min-height: 100%;
+}
+body:before {
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  background-color: #fff;
+}
+.wrap {
+  height: 100%;
+}
+.layout-ceiling {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+.layout-menu-left {
+  position: fixed;  
+  top: 60px;
+  bottom: 0;
+  background: #2e3947;
+  overflow-y: auto;
+}
+.layout-menu-right {
+  position:absolute;
+  top: 104px;
+  bottom: 0;
+  overflow-y: auto;
+}
+.layout-content {
+  padding:10px 15px 0;
+}
+.layout-breadcrumb {
+  position: fixed;
+  top: 60px;
+  left: 16.66666667%;
+  width: 83.33333333%;
+  height: 44px;
+  line-height: 44px;
+  background: #eee;
+}
+.ivu-breadcrumb {
+  padding-left: 15px;
+}
+.ivu-breadcrumb-item-separator {
+  color: #666;
+}
+.layout-inquiry {
+  position: fixed;
+  top: 104px;
+  left: 16.66666667%;
+  z-index: 100;
+  width: 83.3333%;
+  padding: 10px 15px 0;
+  background: #fff;
+}
+.layout-list {
+  position: fixed;
+  top: 229px;
+  bottom: 0;
+  padding-right: 15px;
+  width: 83.33333333%;
+  overflow: auto;
+}
+/*page底部留白*/
+.layout-list .ivu-page {
+  margin-bottom: 130px;
+}
+
+/**table**/
+.ivu-table-wrapper {
+  margin-bottom: 10px;
+}
+.ivu-table-wrapper table {
+  width: 100%!important;
+}
+.ivu-table td, .ivu-table th {
+  height: 44px;
+  padding: 0 10px;
+}
+.ivu-table-cell {
+  padding: 0;
+}
+.ivu-table-tip table td {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ed3f14;
+}
+
+.ivu-tooltip {
+  display: block;
+}
+.ivu-tooltip-rel {
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.ivu-tooltip-inner {
+  max-width: 800px;
+  white-space: normal;
+}
+/**panel**/
+.panel {
+  padding: 10px;
+  margin-bottom: 15px;
+  background: #f8f8f9;
+  color: #80848f;
+  border-radius: 3px;
+  border-left: 5px solid #2db7f5;
+}
+.panel strong {
+  font-weight: bold!important;
+  margin-right: 3px;
+}
+.tabs .ivu-tabs-nav {    
+  width: 100%;
+  overflow: hidden;
+}
+/**tab选项卡**/
+.tabs .ivu-tabs-nav .ivu-tabs-tab button {
+  position: absolute;
+  top: 0;
+  left: 0;              
+  width: 90px;
+  height: 31px;
+  border: 0; 
+  background: red;
+  opacity: 0;
+  filter: alpha(opacity=0);
+
+}
+.tabs .ivu-tabs-nav .ivu-tabs-tab:nth-last-child(1),
+.tabs .ivu-tabs-nav .ivu-tabs-tab:nth-last-child(2),
+.tabs .ivu-tabs-nav .ivu-tabs-tab:nth-last-child(3),
+.tabs .ivu-tabs-nav .ivu-tabs-tab:nth-last-child(4){
+  float: right;  
+}
+.tabs .ivu-tabs-nav .ivu-tabs-tab:nth-last-child(4){
+  margin-right: 0!important;
+} 
+
+/*** input中的icon ***/
+.ivu-form-item-content>.ivu-icon {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 20px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/*** 地址中连接input间的中划线 ***/
+.line span {
+  display: inline-block;
+  width: 25px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  color: #000;
+}
+.address.ivu-form-item>.ivu-form-item-content {
+  margin-left: -20px!important;
+}
+
+/*** 上传本地文件 ***/
+.uploadLocalFile .ivu-btn {
+  position: relative; 
+}    
+.uploadLocalFile .uploadForm {
+  position: absolute; 
+  width: 74px;
+  height: 32px;
+  left: 0;
+  top: 0; 
+  z-index: 99; 
+  background: #ccc;
+  cursor: pointer; 
+  opacity: 0;  
+  filter: alpha(opacity=0);
+}
+.uploadLocalFile .uploadForm .file { 
+  position: absolute; 
+  width: 74px;
+  height: 32px;
+  left: 0;
+  top: 0; 
+  z-index: 100;         
+  font-size: 0px;
+  cursor: pointer;
+}
+
+/***start loading遮罩层 ***/
+div.dhx_modal_cover {
+  border: currentColor;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  _height: 0;
+  _overflow: hidden;
+  position: fixed;
+  filter: alpha(opacity=50);
+  opacity: .5;
+  z-index: 19999;
+  cursor: default;
+  zoom: 1;
+  background-color: rgba(0,0,0,255);
+}
+div.dhx_modal_loading {
+  z-index: 20000; 
+  position: fixed; 
+  left: 50%; 
+  top: 50%; 
+  margin-left: -33px; 
+  margin-top: -33px;
+  height: 66px;
+  width: 66px;
+  background: url(../img/loading.gif) no-repeat center;
+}
+/***end loading遮罩层 ***/
+
+/*解决page组件遮挡*/
+.ivu-tabs-tabpane {
+  padding-bottom: 150px;
+}   
+
+/***start txt文件预览 ***/
+.viewer-canvas iframe{
+  background: #fff;
+}
+
+/*** 解决多个标签之间右侧边框超出问题 ***/
+.ivu-tabs .ivu-tabs-tabpane {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.carmerLoading {
+  /*position:fixed;
+  left: 50%; 
+  top: 50%; 
+  margin-left: -33px; 
+  margin-top: -33px;
+  height: 66px;
+  width: 66px;
+  z-index: 30000;
+  display: block !important;
+  background: url(../img/uploading.gif) no-repeat center;
+  border: 2px solid #2db7f5;*/
+
+  width: 101px;
+  height: 10px;  
+  margin-left: 10px;
+  display: inline-block;
+  background: url(../img/uploading.gif) repeat center;
+}
+.carmerInputArea {
+  margin: 20px auto; 
+  text-align: center;        
+}
+.carmerInputArea .carmerLabel {
+  font-size: 15px; 
+  color: #1c2438; 
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.carmerInputArea .carmerInput {
+  width: 240px;display: inline-block;
+  height: 32px;
+  line-height: 1.5;
+  padding: 4px 7px;
+  font-size: 12px;
+  border: 1px solid #dddee1;
+  border-radius: 4px;
+  color: #495060;
+  background-color: #fff;
+  background-image: none;
+}
+.carmerInputArea .carmerButton {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: 1.5;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: 6px 15px;
+  font-size: 12px;
+  border-radius: 4px;
+  color: #495060;
+  background-color: #f7f7f7;
+  border-color: #dddee1;
+}
+.carmerInputArea .btn-primary {
+  color: #fff;
+  background-color: #2d8cf0;
+  border-color: #2d8cf0;
+}
+
+
+@media (max-width: 768px){
+  .ivu-table th, .ivu-table-cell{
+    overflow: visible;
+  }
+  .ivu-table td, .ivu-table th, .ivu-table-cell {
+    text-overflow: clip;
+  }
+  .ivu-table-cell {
+    white-space: nowrap;
+  }
+  .ivu-table table{
+    table-layout: auto;
+  }
+
+  /**menu**/
+  .slide-menu-ul.slide-menu-ul-1 > .slide-menu-li.slide-menu-li-1 > .type-name{
+    font-size: 14px!important;
+  }  
+  .slide-menu-ul .slide-menu-li .type-name{
+    padding-left: 20px!important;
+  }
+  .slide-menu-ul .slide-menu-li .ivu-icon{
+    width: 20px!important;
+    font-size: 14px!important;
+  }
+  .layout-list{
+    top: 285px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

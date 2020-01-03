@@ -1,0 +1,46 @@
+<meta charset="UTF-8">
+<SCRIPT LANGUAGE="JavaScript">
+
+function CZUR_Initialize(){
+    var lInitialize = EtOcxEx.CZUR_Initialize("JS_OCX.log");
+    if (0 == lInitialize) {
+        alert("调试失败！");
+    }
+}
+
+function CZUR_Deinitialize(){
+    EtOcxEx.CZUR_Deinitialize();
+}
+
+function CZUR_OpenDevice(){
+    var bOpenDevice = EtOcxEx.CZUR_OpenDevice();
+    if (0 == bOpenDevice) {
+        alert("调试失败！");
+    }
+}
+
+function CZUR_CloseDevice(){
+    EtOcxEx.CZUR_CloseDevice();
+}
+
+function CZUR_GrabSingleImage(){
+    var lSuccess = EtOcxEx.CZUR_GrabSingleImage();
+    if (0 == lSuccess) {
+        alert("拍照失败！")
+    }
+}
+
+</SCRIPT>
+
+<TITLE>EtOcxExDEMO</TITLE>
+</HEAD>
+<BODY>
+	<div>
+		<CENTER>
+			<object classid="CLSID:6BA87457-4473-41A1-9A48-6AC45389B971" 
+				width=100% height=100% align="left" id="EtOcxEx">
+	  		</object>
+	 	</CENTER>
+	</div> 	
+</body>
+</html>
